@@ -1,7 +1,6 @@
 from os.path import split, join
 from struct import unpack
 from pandas import DataFrame, read_csv
-
 #######################################################################################
 cols = 135
 rows = 129
@@ -9,12 +8,19 @@ lat_start = 6.5
 long_start = 66.5
 interval = 0.25
 ########################################################################
-def read_grd_rain(file_path, year):
+def read_grd_rain(file_path, year, result_dir):
+    result_dir = result_dir + '/Result'
+    try:
+        os.mkdir(result_dir)
+    except:
+        pass
+    os.chdir(result_dir)
+    
     dir_path = split(file_path)[0]
     file_name = split(file_path)[1]
     
-    write_file_path = join(dir_path, file_name[:-4]+'_grd'+'_'+str(year)+ '.txt')#r'/home/nagendra/Downloads/grd_out.txt'
-    csv_file = join(dir_path, file_name[:-4]+'_grd'+ '_'+str(year)+'.csv')#r'/home/nagendra/Downloads/grd_out.csv'
+    write_file_path = join(dir_path, file_name[:-4]+ '.txt')#r'/home/nagendra/Downloads/grd_out.txt'
+    csv_file = join(dir_path, file_name[:-4]+ '.csv')#r'/home/nagendra/Downloads/grd_out.csv'
     
     out_file = open(write_file_path, 'w+')
     out_file_csv = open(csv_file, 'w', newline='')
@@ -136,12 +142,19 @@ def read_grd_rain(file_path, year):
 
     out_file_csv.close()
 ###########################################################################################
-def read_grd_temp(file_path, year):
+def read_grd_temp(file_path, year, result_dir):
+    result_dir = result_dir + '/Result'
+    try:
+        os.mkdir(result_dir)
+    except:
+        pass
+    os.chdir(result_dir)
+    
     dir_path = split(file_path)[0]
     file_name = split(file_path)[1]
     
-    write_file_path = join(dir_path, file_name[:-4]+'_grd'+'_'+str(year)+ '.txt')#r'/home/nagendra/Downloads/grd_out.txt'
-    csv_file = join(dir_path, file_name[:-4]+'_grd'+ '_'+str(year)+'.csv')#r'/home/nagendra/Downloads/grd_out.csv'
+    write_file_path = join(dir_path, file_name[:-4]+ '.txt')#r'/home/nagendra/Downloads/grd_out.txt'
+    csv_file = join(dir_path, file_name[:-4]+ '.csv')#r'/home/nagendra/Downloads/grd_out.csv'
     
     out_file = open(write_file_path, 'w+')
     out_file_csv = open(csv_file, 'w', newline='')
@@ -156,13 +169,7 @@ def read_grd_temp(file_path, year):
 #    file_path = r'/home/nagendra/Downloads/Clim_Pred_LRF_New_GridDataDownload_Rainfall_ind2006_rfp25.grd'
     data = open(file_path,'rb')
     main_csv_data=[];main_header=[];
-    ###################################################
-#    cols = 135
-#    rows = 129
-#    interval = 0.25
-#    lat_start = 6.5
-#    long_start = 66.5
-    #####################################################
+
     nd1 = [0,31,28,31,30,31,30,31,31,30,31,30,31]
     nd2 = [0,31,29,31,30,31,30,31,31,30,31,30,31]
     if (len((year)) != 4):
