@@ -1,6 +1,9 @@
 from os.path import split, join
 from struct import unpack
 from pandas import DataFrame, read_csv
+import os
+import pandas as pd
+import numpy as np
 #######################################################################################
 cols = 135
 rows = 129
@@ -15,14 +18,12 @@ def read_grd_rain(file_path, year, result_dir):
     except:
         pass
     os.chdir(result_dir)
+    curr_wd = os.getcwd()
     
-    dir_path = split(file_path)[0]
+#    dir_path = split(file_path)[0]
     file_name = split(file_path)[1]
     
-    write_file_path = join(dir_path, file_name[:-4]+ '.txt')#r'/home/nagendra/Downloads/grd_out.txt'
-    csv_file = join(dir_path, file_name[:-4]+ '.csv')#r'/home/nagendra/Downloads/grd_out.csv'
-    
-    out_file = open(write_file_path, 'w+')
+    csv_file = join(curr_wd, file_name[:-4]+ '.csv')#r'/home/nagendra/Downloads/grd_out.csv'
     out_file_csv = open(csv_file, 'w', newline='')
     #######################################################################################
     cols = 135
@@ -31,8 +32,6 @@ def read_grd_rain(file_path, year, result_dir):
     long_start = 66.5
     interval = 0.25
     ########################################################################
-    
-#    file_path = r'/home/nagendra/Downloads/Clim_Pred_LRF_New_GridDataDownload_Rainfall_ind2006_rfp25.grd'
     data = open(file_path,'rb')
     main_csv_data=[];main_header=[];
 ################################################################
@@ -62,13 +61,6 @@ def read_grd_rain(file_path, year, result_dir):
     main_header.append('Date')
     main_header.append('Rainfall')
     
-    out_file.write('Serial No.    ')
-    out_file.write('Latitude   ')
-    out_file.write('Longitude   ')
-    out_file.write('Date       ')
-    out_file.write('Rainfall')
-    out_file.write('\n')
-    
     for month in range(1,13):
         nd = nd1[month]
         if (year == year1):
@@ -87,17 +79,7 @@ def read_grd_rain(file_path, year, result_dir):
                     rainfall = (unpack('f', line))
                     #################################################
 #                    if (rainfall[0] != -999.0 and rainfall[0] != 0.0):
-                    sr_no += 1
-                    out_file.write('%9d'%(sr_no))
-                    out_file.write('%10.2f'%(la[i]))
-                    out_file.write('%12.2f'%(lo[j]))
-                    out_file.write('%5d'%(date))
-                    out_file.write('%02d'%(month))
-                    out_file.write('%04d'%(year))
-                    out_file.write('     ')
-                    out_file.write('%f'%(rainfall[0]))
-                    out_file.write('\n')
-                    ###############################################
+                    sr_no += 1###########################
                     csv_data.append(sr_no)
                     csv_data.append(la[i])
                     csv_data.append(lo[j])
@@ -113,7 +95,6 @@ def read_grd_rain(file_path, year, result_dir):
 #        msg.config(text='Month= '+str(month))
 #        msg.update_idletasks()         
         print(month)
-    out_file.close()
 #    print(date_list)
     df = DataFrame(main_csv_data, columns= main_header)
     ##############################################################
@@ -141,6 +122,8 @@ def read_grd_rain(file_path, year, result_dir):
     df11.to_csv(out_file_csv, index=False)
 
     out_file_csv.close()
+    
+    
 ###########################################################################################
 def read_grd_temp(file_path, year, result_dir):
     result_dir = result_dir + '/Result'
@@ -149,14 +132,13 @@ def read_grd_temp(file_path, year, result_dir):
     except:
         pass
     os.chdir(result_dir)
+    curr_wd = os.getcwd()
     
-    dir_path = split(file_path)[0]
+#    dir_path = split(file_path)[0]
     file_name = split(file_path)[1]
     
-    write_file_path = join(dir_path, file_name[:-4]+ '.txt')#r'/home/nagendra/Downloads/grd_out.txt'
-    csv_file = join(dir_path, file_name[:-4]+ '.csv')#r'/home/nagendra/Downloads/grd_out.csv'
+    csv_file = join(curr_wd, file_name[:-4]+ '.csv')
     
-    out_file = open(write_file_path, 'w+')
     out_file_csv = open(csv_file, 'w', newline='')
     #######################################################################################
     cols = 31
@@ -165,8 +147,6 @@ def read_grd_temp(file_path, year, result_dir):
     long_start = 67.5
     interval = 1
     ########################################################################
-    
-#    file_path = r'/home/nagendra/Downloads/Clim_Pred_LRF_New_GridDataDownload_Rainfall_ind2006_rfp25.grd'
     data = open(file_path,'rb')
     main_csv_data=[];main_header=[];
 
@@ -196,13 +176,6 @@ def read_grd_temp(file_path, year, result_dir):
     main_header.append('Date')
     main_header.append('Rainfall')
     
-    out_file.write('Serial No.    ')
-    out_file.write('Latitude   ')
-    out_file.write('Longitude   ')
-    out_file.write('Date       ')
-    out_file.write('Rainfall')
-    out_file.write('\n')
-    
     for month in range(1,13):
         nd = nd1[month]
         if (year == year1):
@@ -225,15 +198,6 @@ def read_grd_temp(file_path, year, result_dir):
                     #################################################
 #                    if (rainfall[0] != -999.0 and rainfall[0] != 0.0):
                     sr_no += 1
-                    out_file.write('%9d'%(sr_no))
-                    out_file.write('%10.2f'%(la[i]))
-                    out_file.write('%12.2f'%(lo[j]))
-                    out_file.write('%5d'%(date))
-                    out_file.write('%02d'%(month))
-                    out_file.write('%04d'%(year))
-                    out_file.write('     ')
-                    out_file.write('%f'%(rainfall[0]))
-                    out_file.write('\n')
                     ###############################################
                     csv_data.append(sr_no)
                     csv_data.append(la[i])
@@ -251,7 +215,6 @@ def read_grd_temp(file_path, year, result_dir):
 #        msg.config(text='Month= '+str(month))
 #        msg.update_idletasks()         
         print(month)
-    out_file.close()
     
     df = DataFrame(main_csv_data, columns= main_header)
     df.to_csv(out_file_csv, index=False)
@@ -278,6 +241,8 @@ def read_grd_temp(file_path, year, result_dir):
     df11.to_csv(out_file_csv, index=False)
 
     out_file_csv.close()
+    
+    return df11
 ########################################################################################
 def mean(max_file, min_file, year):
     dir_path = os.path.split(max_file)[0]
