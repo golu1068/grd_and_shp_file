@@ -4,6 +4,8 @@ from pandas import DataFrame, read_csv
 import os
 import pandas as pd
 import numpy as np
+from geopandas import GeoDataFrame
+from shapely.geometry import Point
 #######################################################################################
 cols = 135
 rows = 129
@@ -119,11 +121,11 @@ def read_grd_rain(file_path, year, result_dir):
        
     ############################################################
     out_file_csv = open(csv_file, 'w', newline='')
-    df11.to_csv(out_file_csv, index=False)
+#    df11.to_csv(out_file_csv, index=False)
 
     out_file_csv.close()
     
-    
+    return df11
 ###########################################################################################
 def read_grd_temp(file_path, year, result_dir):
     result_dir = result_dir + '/Result'
@@ -218,12 +220,13 @@ def read_grd_temp(file_path, year, result_dir):
     
     df = DataFrame(main_csv_data, columns= main_header)
     df.to_csv(out_file_csv, index=False)
-    
+    print(df)
     data.close()
     
     out_file_csv.close()
     ############################################################
     df = read_csv(csv_file, low_memory=False)
+    print(df)
     df11 = DataFrame()
     
     df11.insert(0, 'Latitude', df['Latitude'][0:961])
@@ -238,33 +241,37 @@ def read_grd_temp(file_path, year, result_dir):
        
     ############################################################
     out_file_csv = open(csv_file, 'w', newline='')
-    df11.to_csv(out_file_csv, index=False)
+#    df11.to_csv(out_file_csv, index=False)
 
     out_file_csv.close()
     
     return df11
 ########################################################################################
-def mean(max_file, min_file, year):
-    dir_path = os.path.split(max_file)[0]
-    print(dir_path)
-    mean_file = os.path.join(dir_path, 'mean_temp_'+str(year)+'.csv')
-    mean_file_csv = open(mean_file, 'w', newline='')
+def csv2shp(df, result_dir, year, name):
+    result_dir = result_dir + '/Result'
+    try:
+        os.mkdir(result_dir)
+    except:
+        pass
+    os.chdir(result_dir)
+    curr_wd = os.getcwd()
+
+    try:
+        os.mkdir('shapefile_'+str(year))
+    except:
+        pass
+    curr_wd = curr_wd + r'/shapefile_' + str(year)
+
+    geometry = [Point(xy) for xy in zip(df.Longitude, df.Latitude)] 
     
-    df_min = pd.read_csv(min_file, low_memory=False)
-    df_max = pd.read_csv(max_file, low_memory=False)
     
-    df_mean = pd.DataFrame()
-    df_header = list(df_min)[2:]
+    # 5 Define coordinate reference system on which to project your resulting shapefile
+    crs = {'init': 'epsg:4326'}
     
-    df_mean.insert(0, 'Latitude', df_min['Latitude'][0:961])
-    df_mean.insert(1, 'Longitude', df_min['Longitude'][0:961])
+    # 6 Convert pandas object (containing your csv) to geodataframe object using geopandas
+    gdf = GeoDataFrame(df, crs = crs, geometry=geometry)
     
-    for i in range(len(df_header)):
-        a = np.array(df_min[df_header[i]])
-        b = np.array(df_max[df_header[i]])
-        c = (a + b)/2
-        header = list(df_mean)
-        df_mean.insert(len(header),  'day_'+str('%s'%(i+1)), c)
-    df_mean.to_csv(mean_file_csv, index=False)
-    
-    mean_file_csv.close()
+    # 7 Save file to local destination
+    output_filename = curr_wd + r'/equation_'+ name + '_' + str(year) + ".shp"
+    gdf.to_file(filename= output_filename, driver='ESRI Shapefile')
+    print('csv to shp conversion complete for '+name)
