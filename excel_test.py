@@ -60,7 +60,7 @@ def read_csv(file):
         df2 = pd.DataFrame(np.transpose(new_file_data), columns=['Date', 'Rainfall_sum'])
         df2.to_csv(write_file_rainfall,index=False)
         #############################################################
-        df = pd.concat([df, df1])
+        df = pd.concat([df, df1], sort=False)
         df.fillna('')
         df.insert(len(header), 'Date', date)
         header = list(df)
