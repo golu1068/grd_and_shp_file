@@ -32,18 +32,18 @@ def read_csv(file):
         period = 366
         ###############################################################
         for i in range(len(header)):
-            if (header[i] == 'Day_1'):
+            if (header[i] == 'day_1'):
                 start = i
-            if (header[i] == 'Day_366'):
+            if (header[i] == 'day_366'):
                 stop = i
         ############################################################
     else:
         period = 365
         ###############################################################
         for i in range(len(header)):
-            if (header[i] == 'Day_1'):
+            if (header[i] == 'day_1'):
                 start = i
-            if (header[i] == 'Day_365'):
+            if (header[i] == 'day_365'):
                 stop = i
         ############################################################
     date = pd.date_range('01-01-'+str(year), periods=period)
